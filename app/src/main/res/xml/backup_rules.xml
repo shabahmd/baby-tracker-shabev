@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 11 and below. Back up the two things that exist: the log itself (the whole
+  database domain, so Room's -wal and -shm files travel with it) and the handful of
+  settings DataStore keeps in files/datastore. Anything not listed here is excluded by
+  omission, which is why there is no <exclude> element.
+-->
 <full-backup-content>
     <include
         domain="database"
-        path="nestling.db" />
+        path="." />
     <include
-        domain="sharedpref"
-        path="." />
-    <exclude
-        domain="external"
-        path="." />
+        domain="file"
+        path="datastore" />
 </full-backup-content>
