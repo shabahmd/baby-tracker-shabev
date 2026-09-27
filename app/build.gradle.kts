@@ -9,7 +9,9 @@ plugins {
 
 android {
     namespace = "com.nestling.baby"
-    compileSdk = 36
+    // The AndroidX libraries below (compose 1.12, core-ktx 1.19, lifecycle 2.11) declare
+    // a minimum compileSdk of 37.
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.nestling.baby"

@@ -81,7 +81,7 @@ jobs:
       - name: Build, unit tests, lint
         run: |
           set -o pipefail
-          ./gradlew --no-daemon --stacktrace \
+          ./gradlew --no-daemon \
             assembleDebug \
             testDebugUnitTest \
             lintDebug \
@@ -157,10 +157,17 @@ jobs:
           {
             echo "### Android CI: ${status}"
             echo ""
-            echo "<details><summary>Failures / errors</summary>"
+            echo "<details open><summary>Compiler / task errors</summary>"
             echo ""
             echo '```'
-            grep -nE "^e: |error:|FAILED|FAILURE|Caused by|Execution failed|> Task .*FAILED|AssertionError|Exception" /tmp/build.log 2>/dev/null | head -80 || echo "(none)"
+            grep -nE "^e: |^w: .*error|error:|> Task .*FAILED|AssertionError" /tmp/build.log 2>/dev/null | head -120 || echo "(none)"
+            echo '```'
+            echo "</details>"
+            echo ""
+            echo "<details open><summary>What went wrong</summary>"
+            echo ""
+            echo '```'
+            sed -n '/^\* What went wrong:/,/^\* Try:/p' /tmp/build.log 2>/dev/null | head -60 || echo "(none)"
             echo '```'
             echo "</details>"
             echo ""
