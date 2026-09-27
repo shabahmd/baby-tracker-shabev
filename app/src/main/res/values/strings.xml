@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nestling</string>
+    <string name="app_tagline">The baby tracker that can\'t lose your data</string>
+
+    <!-- Navigation -->
+    <string name="nav_today">Today</string>
+    <string name="nav_history">History</string>
+    <string name="cd_quick_log_fab">Quick log an event</string>
+    <string name="cd_close_sheet">Close</string>
+
+    <!-- Events -->
+    <string name="event_bottle">Bottle</string>
+    <string name="event_sleep">Sleep</string>
+    <string name="event_diaper">Diaper</string>
+    <string name="cd_log_bottle">Log a bottle, starts a timer</string>
+    <string name="cd_log_sleep">Log sleep, starts a timer</string>
+    <string name="cd_log_diaper">Log a diaper change</string>
+    <string name="cd_stop_bottle">Stop the bottle timer and save</string>
+    <string name="cd_stop_sleep">Stop the sleep timer and save</string>
+
+    <!-- Quick log sheet -->
+    <string name="quick_log_title">Log an event</string>
+    <string name="quick_log_subtitle">One tap. Nothing leaves this phone.</string>
+
+    <!-- Diaper -->
+    <string name="diaper_title">Diaper</string>
+    <string name="diaper_wet">Wet</string>
+    <string name="diaper_dirty">Dirty</string>
+    <string name="diaper_both">Both</string>
+
+    <!-- Side + amount -->
+    <string name="side_left">Left</string>
+    <string name="side_right">Right</string>
+    <string name="side_both">Both</string>
+    <string name="side_label">Side</string>
+    <string name="amount_label">Amount</string>
+    <string name="cd_amount_decrease">Decrease amount</string>
+    <string name="cd_amount_increase">Increase amount</string>
+    <string name="amount_sheet_title">Bottle details</string>
+    <string name="action_done">Done</string>
+    <string name="action_save">Save</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_edit_amount">Edit</string>
+
+    <!-- Timer -->
+    <string name="timer_running_bottle">Bottle in progress</string>
+    <string name="timer_running_sleep">Sleep in progress</string>
+    <string name="timer_stop">Stop</string>
+    <string name="timer_discard">Discard</string>
+    <string name="cd_discard_timer">Discard the running timer without saving</string>
+    <string name="timer_started_at">Started %1$s</string>
+    <string name="notification_channel_timer">Running timer</string>
+    <string name="notification_channel_timer_description">Shows the feed or sleep currently being timed.</string>
+
+    <!-- Timeline -->
+    <string name="timeline_today">Today</string>
+    <string name="timeline_yesterday">Yesterday</string>
+    <string name="empty_today_title">No events yet</string>
+    <string name="empty_today_body">Tap + to log the first feeding. Everything stays on this phone.</string>
+    <string name="empty_history_title">Nothing logged on this day</string>
+    <string name="empty_history_body">Swipe the arrows to browse another day.</string>
+    <string name="empty_search_title">No matches</string>
+    <string name="empty_search_body">Try \"bottle\", \"wet\" or an amount like \"120\".</string>
+    <string name="cd_empty_illustration">A sleeping crescent moon above a baby bottle</string>
+
+    <!-- History -->
+    <string name="history_search_hint">Search the log</string>
+    <string name="cd_previous_day">Previous day</string>
+    <string name="cd_next_day">Next day</string>
+    <string name="cd_jump_today">Jump to today</string>
+    <string name="cd_clear_search">Clear search</string>
+
+    <!-- Top bar -->
+    <string name="cd_night_mode_on">Turn on night mode</string>
+    <string name="cd_night_mode_off">Turn off night mode</string>
+    <string name="cd_more_options">More options</string>
+    <string name="menu_export">Export CSV</string>
+    <string name="menu_rename">Rename baby</string>
+    <string name="menu_units_ml">Show amounts in ml</string>
+    <string name="menu_units_oz">Show amounts in oz</string>
+    <string name="rename_title">Baby\'s name</string>
+
+    <!-- Messages -->
+    <string name="msg_saved_bottle">Bottle saved</string>
+    <string name="msg_saved_sleep">Sleep saved</string>
+    <string name="msg_saved_diaper">Diaper saved</string>
+    <string name="msg_deleted">Event deleted</string>
+    <string name="msg_export_failed">Could not write the CSV file</string>
+    <string name="msg_export_ready">CSV ready to share</string>
+    <string name="msg_night_suggestion">It\'s late. Switch to night mode?</string>
+    <string name="msg_night_suggestion_action">Turn on</string>
+    <string name="msg_timer_discarded">Timer discarded</string>
+    <string name="msg_generic_error">Something went wrong, nothing was lost</string>
+
+    <!-- Export -->
+    <string name="export_share_title">Nestling log</string>
+
+    <!-- Widget -->
+    <string name="widget_label">Nestling quick log</string>
+    <string name="widget_description">Log a bottle, sleep or diaper straight from the home screen.</string>
+    <string name="widget_running">Running</string>
+</resources>

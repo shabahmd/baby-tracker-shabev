@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+. Device-to-device transfer keeps the log, and cloud backup only ever
+  happens if the parent has turned it on for the whole device. Nestling itself never
+  uploads anything — it has no INTERNET permission.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include
+            domain="database"
+            path="." />
+        <include
+            domain="file"
+            path="datastore" />
+    </cloud-backup>
+    <device-transfer>
+        <include
+            domain="database"
+            path="." />
+        <include
+            domain="file"
+            path="datastore" />
+    </device-transfer>
+</data-extraction-rules>

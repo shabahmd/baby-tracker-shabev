@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+: the widget wears the wallpaper's colours, like the app does. -->
+<resources>
+    <color name="widget_background">@android:color/system_neutral1_50</color>
+    <color name="widget_button">@android:color/system_accent1_100</color>
+    <color name="widget_button_active">@android:color/system_accent1_600</color>
+    <color name="widget_icon">@android:color/system_neutral1_900</color>
+    <color name="widget_icon_active">@android:color/system_accent1_0</color>
+</resources>
