@@ -81,7 +81,7 @@ jobs:
       - name: Build, unit tests, lint
         run: |
           set -o pipefail
-          ./gradlew --no-daemon \
+          ./gradlew --no-daemon --continue \
             assembleDebug \
             testDebugUnitTest \
             lintDebug \
@@ -161,6 +161,16 @@ jobs:
             echo ""
             echo '```'
             grep -nE "^e: |^w: .*error|error:|> Task .*FAILED|AssertionError" /tmp/build.log 2>/dev/null | head -120 || echo "(none)"
+            echo '```'
+            echo "</details>"
+            echo ""
+            echo "<details open><summary>Lint errors</summary>"
+            echo ""
+            echo '```'
+            find app/build -name "lint-results-*.txt" 2>/dev/null | while read -r report; do
+              echo "== $report"
+              grep -nE "Error:" "$report" | head -40
+            done
             echo '```'
             echo "</details>"
             echo ""
