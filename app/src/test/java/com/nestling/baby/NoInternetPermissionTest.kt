@@ -21,6 +21,9 @@ class NoInternetPermissionTest {
         Manifest.permission.POST_NOTIFICATIONS,
         Manifest.permission.FOREGROUND_SERVICE,
         "android.permission.FOREGROUND_SERVICE_SPECIAL_USE",
+        // Declared by androidx.core for its own dynamically registered receivers.
+        // Signature-level, derived from the application id, never shown to the user.
+        "com.nestling.baby.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
     )
 
     private val banned = listOf(

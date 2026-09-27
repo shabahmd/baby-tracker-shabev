@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:baselineAligned="false"
+    android:orientation="horizontal"
+    android:padding="4dp">
+
+    <ImageView
+        android:id="@+id/widget_bottle"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="3dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_button_background"
+        android:contentDescription="@string/cd_log_bottle"
+        android:padding="7dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_bottle"
+        android:tint="@color/widget_icon" />
+
+    <ImageView
+        android:id="@+id/widget_sleep"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="3dp"
+        android:layout_weight="1"
+        android:background="@drawable/widget_button_background"
+        android:contentDescription="@string/cd_log_sleep"
+        android:padding="7dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_sleep"
+        android:tint="@color/widget_icon" />
+
+    <ImageView
+        android:id="@+id/widget_diaper"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/widget_button_background"
+        android:contentDescription="@string/cd_log_diaper"
+        android:padding="7dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_diaper"
+        android:tint="@color/widget_icon" />
+
+</LinearLayout>

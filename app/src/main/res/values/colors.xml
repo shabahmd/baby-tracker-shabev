@@ -3,4 +3,11 @@
     <!-- Pre-first-frame window colour. Warm off-white in day, near-black at night. -->
     <color name="window_background">#FFFBF8F6</color>
     <color name="ic_launcher_background">#FF2F4F45</color>
+
+    <!-- Home-screen widget (dynamic colour overrides live in values-v31). -->
+    <color name="widget_background">#FFF1EDE8</color>
+    <color name="widget_button">#FFC3EAD6</color>
+    <color name="widget_button_active">#FF3F6B5B</color>
+    <color name="widget_icon">#FF07261A</color>
+    <color name="widget_icon_active">#FFFFFFFF</color>
 </resources>

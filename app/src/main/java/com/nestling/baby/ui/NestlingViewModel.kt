@@ -121,9 +121,12 @@ class NestlingViewModel(
             val running = repository.currentTimer()
             when {
                 running == null -> startTimer(type)
-                running.type == type -> stopTimer()
+                running.type == type -> stopTimerNow()
                 else -> {
-                    stopTimer()
+                    // Sequentially, in this one coroutine: the sleep that was running is
+                    // saved *before* the bottle starts. Launching two coroutines here
+                    // raced and overwrote the first timer.
+                    stopTimerNow()
                     startTimer(type)
                 }
             }
@@ -141,22 +144,24 @@ class NestlingViewModel(
      * sheet is offered afterwards from the snackbar — the event is already safe on disk.
      */
     fun stopTimer() {
-        viewModelScope.launch {
-            val running = repository.currentTimer() ?: return@launch
-            val settings = _state.value.settings
-            val bottle = running.type == EventType.BOTTLE
-            val amount = settings.lastAmountMl.takeIf { bottle }
-            val id = repository.stopTimer(amountMl = amount, side = settings.lastSide.takeIf { bottle })
-            effects.timerStopped()
-            effects.dataChanged()
-            messageChannel.send(
-                UiMessage(
-                    text = if (bottle) R.string.msg_saved_bottle else R.string.msg_saved_sleep,
-                    detail = amount?.let { TimeFormat.amount(it, settings.unit) },
-                    editAmountForEventId = id.takeIf { bottle },
-                ),
-            )
-        }
+        viewModelScope.launch { stopTimerNow() }
+    }
+
+    private suspend fun stopTimerNow() {
+        val running = repository.currentTimer() ?: return
+        val settings = _state.value.settings
+        val bottle = running.type == EventType.BOTTLE
+        val amount = settings.lastAmountMl.takeIf { bottle }
+        val id = repository.stopTimer(amountMl = amount, side = settings.lastSide.takeIf { bottle })
+        effects.timerStopped()
+        effects.dataChanged()
+        messageChannel.send(
+            UiMessage(
+                text = if (bottle) R.string.msg_saved_bottle else R.string.msg_saved_sleep,
+                detail = amount?.let { TimeFormat.amount(it, settings.unit) },
+                editAmountForEventId = id.takeIf { bottle },
+            ),
+        )
     }
 
     fun discardTimer() {

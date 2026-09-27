@@ -2,4 +2,11 @@
 <resources>
     <!-- Night: start black so a 3am launch never flashes white. -->
     <color name="window_background">#FF000000</color>
+
+    <!-- Night: dim, never a white square on the home screen at 3am. -->
+    <color name="widget_background">#FF0B0B0B</color>
+    <color name="widget_button">#FF1E2622</color>
+    <color name="widget_button_active">#FF7FCFAC</color>
+    <color name="widget_icon">#FFBFD8CC</color>
+    <color name="widget_icon_active">#FF07261A</color>
 </resources>

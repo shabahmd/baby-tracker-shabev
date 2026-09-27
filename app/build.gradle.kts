@@ -100,7 +100,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.androidx.datastore.preferences)
-    implementation(libs.androidx.glance.appwidget)
 
     // Material Components: Theme.Material3.* XML themes + DynamicColors.applyToActivitiesIfAvailable.
     implementation(libs.material)

@@ -93,8 +93,9 @@ CI additionally greps the source for networking, accounts and pull-to-refresh, a
 ./gradlew lintDebug
 ```
 
-- Kotlin, single module, Room, DataStore, Compose, Glance. No backend, no Firebase, no
-  analytics.
+- Kotlin, single module, Room, DataStore, Compose (the widget is plain RemoteViews —
+  Glance would have added WorkManager's WAKE_LOCK and RECEIVE_BOOT_COMPLETED). No
+  backend, no Firebase, no analytics.
 - minSdk 26, targetSdk 36, JDK 21, AGP 9.3.2 / Gradle 9.7.1.
 
 GitHub Actions (`.github/workflows/android.yml`) runs the whole thing on every push and

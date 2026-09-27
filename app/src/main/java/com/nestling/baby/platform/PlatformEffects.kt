@@ -1,14 +1,9 @@
 package com.nestling.baby.platform
 
 import android.content.Context
-import androidx.glance.appwidget.updateAll
 import com.nestling.baby.domain.EventType
 import com.nestling.baby.timer.TimerService
-import com.nestling.baby.widget.QuickLogWidget
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import com.nestling.baby.widget.refreshQuickLogWidget
 
 /**
  * Side effects that need a Context (foreground service, widget refresh). Keeping them
@@ -45,12 +40,6 @@ class AndroidPlatformEffects(private val context: Context) : PlatformEffects {
     override fun dataChanged() = refreshWidget()
 
     private fun refreshWidget() {
-        scope.launch {
-            runCatching { QuickLogWidget().updateAll(context) }
-        }
-    }
-
-    private companion object {
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        runCatching { refreshQuickLogWidget(context) }
     }
 }
