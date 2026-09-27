@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <include
+        domain="database"
+        path="nestling.db" />
+    <include
+        domain="sharedpref"
+        path="." />
+    <exclude
+        domain="external"
+        path="." />
+</full-backup-content>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- CSV exports the parent owns. Shared out via the system share sheet, never uploaded. -->
+    <cache-path
+        name="exports"
+        path="exports/" />
+</paths>

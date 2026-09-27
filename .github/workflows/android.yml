@@ -1,0 +1,187 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build, test, and verify the no-network promise
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.7.1'
+
+      - name: Bootstrap the Gradle wrapper if it is missing
+        id: wrapper
+        run: |
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            gradle wrapper --gradle-version 9.7.1 --distribution-type bin
+            echo "created=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "created=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit the wrapper back to the branch
+        if: steps.wrapper.outputs.created == 'true' && github.event_name == 'push'
+        continue-on-error: true
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f gradlew gradlew.bat gradle/wrapper
+          git commit -m "build: add Gradle wrapper (generated in CI) [skip ci]" || exit 0
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      # --- Product promises that are cheaper to check than to debug ----------
+      - name: Source guards (no network, no login, no pull-to-refresh)
+        run: |
+          exec > >(tee -a /tmp/build.log) 2>&1
+          set -e
+          fail=0
+          check() {
+            label="$1"; shift
+            if grep -rniE "$1" app/src/main/java > /tmp/hits.txt 2>/dev/null; then
+              echo "::error::$label"
+              cat /tmp/hits.txt
+              fail=1
+            fi
+          }
+          # Networking of any kind.
+          check "networking code found in a no-network app" 'okhttp|retrofit|HttpURLConnection|URLConnection|java\.net\.(URL|Socket)|firebase|com\.google\.android\.gms|amplitude|mixpanel|segment\.analytics'
+          # Accounts, paywalls, upsells.
+          check "an account/paywall surface appeared" '(class|fun|object|val) *[A-Za-z]*(Login|SignIn|SignUp|Auth[A-Z]|Paywall|Subscription|Upsell)'
+          # Pull-to-refresh is forbidden: local data is always fresh.
+          check "pull-to-refresh is forbidden" 'pullToRefresh|PullRefresh|SwipeRefresh'
+          if [ "$fail" = "1" ]; then exit 1; fi
+          echo "Source guards passed."
+
+      - name: Build, unit tests, lint
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon --stacktrace \
+            assembleDebug \
+            testDebugUnitTest \
+            lintDebug \
+            assembleRelease 2>&1 | tee -a /tmp/build.log
+
+      - name: Assert INTERNET permission is absent from the merged manifest and the APK
+        run: |
+          exec > >(tee -a /tmp/build.log) 2>&1
+          set -e
+          found=0
+          for manifest in $(find app/build/intermediates -name AndroidManifest.xml | grep -i merge || true); do
+            if grep -q "android.permission.INTERNET" "$manifest"; then
+              echo "::error::INTERNET permission present in $manifest"
+              found=1
+            fi
+          done
+          AAPT2=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 2>/dev/null | tail -1)
+          for apk in app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/release/app-release.apk; do
+            [ -f "$apk" ] || continue
+            echo "--- permissions in $apk ---"
+            "$AAPT2" dump permissions "$apk" || true
+            if "$AAPT2" dump permissions "$apk" | grep -q "name='android.permission.INTERNET'"; then
+              echo "::error::INTERNET permission present in $apk"
+              found=1
+            fi
+          done
+          if [ "$found" = "1" ]; then exit 1; fi
+          echo "Verified: no INTERNET permission anywhere in the merged manifest or the APKs."
+
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo "### Nestling build"
+            echo ""
+            echo "| check | result |"
+            echo "| --- | --- |"
+            echo "| assembleDebug | ${{ job.status }} |"
+            ls -la app/build/outputs/apk/debug/ 2>/dev/null || true
+            echo ""
+            echo "Unit tests:"
+            grep -hoE 'tests="[0-9]+"|failures="[0-9]+"|errors="[0-9]+"' app/build/test-results/testDebugUnitTest/*.xml 2>/dev/null | sort | uniq -c || true
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload APK
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nestling-apks
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/release/*.apk
+          if-no-files-found: ignore
+
+      - name: Upload test and lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            app/build/reports/**
+            app/build/test-results/**
+          if-no-files-found: ignore
+
+      # The sandbox that writes this code cannot download Actions logs, so the tail of
+      # the build is echoed back onto the commit.
+      - name: Report build log to the commit
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          status="${{ job.status }}"
+          {
+            echo "### Android CI: ${status}"
+            echo ""
+            echo "<details><summary>Failures / errors</summary>"
+            echo ""
+            echo '```'
+            grep -nE "^e: |error:|FAILED|FAILURE|Caused by|Execution failed|> Task .*FAILED|AssertionError|Exception" /tmp/build.log 2>/dev/null | head -80 || echo "(none)"
+            echo '```'
+            echo "</details>"
+            echo ""
+            echo "<details><summary>Failing unit tests</summary>"
+            echo ""
+            echo '```'
+            grep -rlE "<failure|<error" app/build/test-results/testDebugUnitTest/*.xml 2>/dev/null | head -20 | while read -r f; do
+              echo "== $f"
+              sed -n 's/.*\(<failure[^>]*\)>.*/\1/p' "$f" | head -5
+              grep -A 12 "<failure" "$f" | head -40
+            done || echo "(none)"
+            echo '```'
+            echo "</details>"
+            echo ""
+            echo "<details><summary>Last 120 log lines</summary>"
+            echo ""
+            echo '```'
+            tail -120 /tmp/build.log 2>/dev/null || echo "(no log)"
+            echo '```'
+            echo "</details>"
+          } > /tmp/comment.md
+          head -c 60000 /tmp/comment.md > /tmp/comment-trimmed.md
+          gh api --method POST "repos/${{ github.repository }}/commits/${{ github.sha }}/comments" \
+            -f body="$(cat /tmp/comment-trimmed.md)" --jq '.html_url'

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pre-first-frame window colour. Warm off-white in day, near-black at night. -->
+    <color name="window_background">#FFFBF8F6</color>
+    <color name="ic_launcher_background">#FF2F4F45</color>
+</resources>

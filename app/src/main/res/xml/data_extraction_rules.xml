@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <!-- Device-to-device transfer keeps the log; cloud backup is opt-in via the OS only. -->
+    <cloud-backup>
+        <include
+            domain="database"
+            path="nestling.db" />
+        <include
+            domain="sharedpref"
+            path="." />
+    </cloud-backup>
+    <device-transfer>
+        <include
+            domain="database"
+            path="nestling.db" />
+        <include
+            domain="sharedpref"
+            path="." />
+    </device-transfer>
+</data-extraction-rules>
