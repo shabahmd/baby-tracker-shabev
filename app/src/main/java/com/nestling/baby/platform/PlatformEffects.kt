@@ -1,6 +1,7 @@
 package com.nestling.baby.platform
 
 import android.content.Context
+import androidx.glance.appwidget.updateAll
 import com.nestling.baby.domain.EventType
 import com.nestling.baby.timer.TimerService
 import com.nestling.baby.widget.QuickLogWidget
