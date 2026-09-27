@@ -1,0 +1,77 @@
+name: Version probe (temporary)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'arena/**'
+    paths:
+      - '.github/workflows/zz-version-probe.yml'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Probe Google Maven + Maven Central for latest versions
+        run: |
+          probe() {
+            base="$1"; path="$2"
+            url="$base/$path/maven-metadata.xml"
+            out=$(curl -sS --max-time 30 "$url" || echo "FETCH_FAIL")
+            latest=$(echo "$out" | grep -o '<latest>[^<]*' | sed 's/<latest>//' | tail -1)
+            release=$(echo "$out" | grep -o '<release>[^<]*' | sed 's/<release>//' | tail -1)
+            last5=$(echo "$out" | grep -o '<version>[^<]*' | sed 's/<version>//' | tail -6 | tr '\n' ' ')
+            echo "### $path"
+            echo "    latest=$latest release=$release"
+            echo "    tail: $last5"
+          }
+          G=https://dl.google.com/dl/android/maven2
+          C=https://repo1.maven.org/maven2
+          echo "===================== GOOGLE MAVEN ====================="
+          for p in \
+            com/android/tools/build/gradle \
+            androidx/compose/compose-bom \
+            androidx/compose/material3/material3 \
+            androidx/compose/ui/ui-test-junit4 \
+            androidx/compose/material/material-icons-extended \
+            androidx/room/room-runtime \
+            androidx/room/room-testing \
+            androidx/glance/glance-appwidget \
+            androidx/glance/glance-material3 \
+            androidx/navigation/navigation-compose \
+            androidx/activity/activity-compose \
+            androidx/lifecycle/lifecycle-viewmodel-compose \
+            androidx/lifecycle/lifecycle-runtime-compose \
+            androidx/datastore/datastore-preferences \
+            androidx/core/core-ktx \
+            androidx/core/core-splashscreen \
+            androidx/test/core \
+            androidx/test/ext/junit \
+            androidx/test/espresso/espresso-core \
+            com/google/android/material/material ; do
+            probe "$G" "$p"
+          done
+          echo "===================== MAVEN CENTRAL ====================="
+          for p in \
+            org/jetbrains/kotlin/kotlin-gradle-plugin \
+            org/jetbrains/kotlin/kotlin-compose-compiler-plugin \
+            com/google/devtools/ksp/symbol-processing-gradle-plugin \
+            org/jetbrains/kotlinx/kotlinx-coroutines-android \
+            org/jetbrains/kotlinx/kotlinx-coroutines-test \
+            org/robolectric/robolectric \
+            com/google/truth/truth \
+            io/github/takahirom/roborazzi/roborazzi \
+            junit/junit ; do
+            probe "$C" "$p"
+          done
+      - name: Runner environment
+        run: |
+          echo "JDKs:"; ls /usr/lib/jvm || true
+          echo "ANDROID_HOME=$ANDROID_HOME ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          ls "$ANDROID_HOME" 2>/dev/null || true
+          echo "platforms:"; ls "$ANDROID_HOME/platforms" 2>/dev/null || true
+          echo "build-tools:"; ls "$ANDROID_HOME/build-tools" 2>/dev/null || true
+          echo "cmdline-tools:"; ls "$ANDROID_HOME/cmdline-tools" 2>/dev/null || true
+          java -version 2>&1 || true
+          gradle --version 2>&1 | head -20 || true
