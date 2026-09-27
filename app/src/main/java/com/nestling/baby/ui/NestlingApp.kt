@@ -20,6 +20,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.nestling.baby.R
@@ -48,6 +50,12 @@ fun NestlingApp(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    // Resolved in composition, not inside the effects below: a snackbar that is already
+    // on screen when the parent flips to night mode should not be reading stale strings.
+    val resources = LocalResources.current
+    val editAmountLabel = stringResource(R.string.action_edit_amount)
+    val nightSuggestion = stringResource(R.string.msg_night_suggestion)
+    val nightSuggestionAction = stringResource(R.string.msg_night_suggestion_action)
     val snackbarHostState = remember { SnackbarHostState() }
     val sheets = rememberSheetController()
     val scope = rememberCoroutineScope()
@@ -99,13 +107,13 @@ fun NestlingApp(
     LaunchedEffect(Unit) {
         viewModel.messages.collect { message ->
             val text = buildString {
-                append(context.getString(message.text))
+                append(resources.getString(message.text))
                 message.detail?.let { append(" · ").append(it) }
             }
             val editId = message.editAmountForEventId
             val result = snackbarHostState.showSnackbar(
                 message = text,
-                actionLabel = editId?.let { context.getString(R.string.action_edit_amount) },
+                actionLabel = editId?.let { editAmountLabel },
                 withDismissAction = false,
                 duration = SnackbarDuration.Short,
             )
@@ -120,8 +128,8 @@ fun NestlingApp(
     LaunchedEffect(state.suggestNightMode) {
         if (!state.suggestNightMode) return@LaunchedEffect
         val result = snackbarHostState.showSnackbar(
-            message = context.getString(R.string.msg_night_suggestion),
-            actionLabel = context.getString(R.string.msg_night_suggestion_action),
+            message = nightSuggestion,
+            actionLabel = nightSuggestionAction,
             withDismissAction = true,
             duration = SnackbarDuration.Long,
         )

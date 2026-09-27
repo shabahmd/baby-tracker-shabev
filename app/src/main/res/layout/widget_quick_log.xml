@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  RemoteViews only: the launcher inflates this in its own process, where AppCompat does
+  not exist, so android:tint is the only tint available (lint's UseAppTint assumes an
+  AppCompat activity). The tints are re-applied per state from the receiver anyway.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widget_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,7 +25,8 @@
         android:padding="7dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_bottle"
-        android:tint="@color/widget_icon" />
+        android:tint="@color/widget_icon"
+        tools:ignore="UseAppTint" />
 
     <ImageView
         android:id="@+id/widget_sleep"
@@ -32,7 +39,8 @@
         android:padding="7dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_sleep"
-        android:tint="@color/widget_icon" />
+        android:tint="@color/widget_icon"
+        tools:ignore="UseAppTint" />
 
     <ImageView
         android:id="@+id/widget_diaper"
@@ -44,6 +52,7 @@
         android:padding="7dp"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_diaper"
-        android:tint="@color/widget_icon" />
+        android:tint="@color/widget_icon"
+        tools:ignore="UseAppTint" />
 
 </LinearLayout>
